@@ -1,5 +1,7 @@
 import axios from "axios";
-const backendUrl = ''
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL
+const token = localStorage.getItem('token');
 
 export const loginUser = (email, password) => async (dispatch) => {
   try {
@@ -8,7 +10,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     });
 
     const { data } = await axios.post(
-      "/api/v1/login",
+      `${backendUrl}/api/v1/login`,
       { email, password },
       {
         headers: {
@@ -16,7 +18,6 @@ export const loginUser = (email, password) => async (dispatch) => {
         },
       }
     );
-
     dispatch({
       type: "LoginSuccess",
       payload: data.user,
@@ -35,7 +36,10 @@ export const loadUser = () => async (dispatch) => {
       type: "LoadUserRequest",
     });
 
-    const { data } = await axios.get("/api/v1/me");
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/me`, postBody);
 
     dispatch({
       type: "LoadUserSuccess",
@@ -55,7 +59,10 @@ export const getFollowingPosts = () => async (dispatch) => {
       type: "postOfFollowingRequest",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/posts`);
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/posts`, postBody);
     dispatch({
       type: "postOfFollowingSuccess",
       payload: data.posts,
@@ -74,7 +81,13 @@ export const getMyPosts = () => async (dispatch) => {
       type: "myPostsRequest",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/my/posts`);
+    // const config = {
+    //   headers: { Authorization: `Bearer ${userToken}` }
+    // };
+    const postBody = {
+      token
+    };
+    const { data } = await axios.post(`${backendUrl}/api/v1/my/posts`, postBody);
     dispatch({
       type: "myPostsSuccess",
       payload: data.posts,
@@ -95,7 +108,10 @@ export const getAllUsers =
           type: "allUsersRequest",
         });
 
-        const { data } = await axios.get(`${backendUrl}/api/v1/users?name=${name}`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/users?name=${name}`, postBody);
         dispatch({
           type: "allUsersSuccess",
           payload: data.users,
@@ -115,7 +131,10 @@ export const getAllFriends =
         dispatch({
           type: "allFriendsRequest",
         });
-        const { data } = await axios.get(`${backendUrl}/api/v1/friends?name=${name}`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/friends?name=${name}`, postBody);
         dispatch({
           type: "allFriendsSuccess",
           payload: data.friends,
@@ -135,7 +154,10 @@ export const getAllFriendsOfOthers =
         dispatch({
           type: "allFriendsOfOthers",
         });
-        const { data } = await axios.get(`${backendUrl}/api/v1/friends/others?name=${name}`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/friends/others?name=${name}`, postBody);
         dispatch({
           type: "allFriendsOfOthersSuccess",
           payload: data.allFriendsOfOthers,
@@ -156,7 +178,10 @@ export const getAllMutualFriends =
           type: "allMutualFriendsRequest",
         });
 
-        const { data } = await axios.get(`${backendUrl}/api/v1/mutualFriends?name=${name}`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/mutualFriends?name=${name}`, postBody);
         dispatch({
           type: "allMutualFriendsSuccess",
           payload: data.mutualFriends,
@@ -176,7 +201,10 @@ export const getAllRequests =
         dispatch({
           type: "allRequests",
         });
-        const { data } = await axios.get(`${backendUrl}/api/v1/requests`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/requests`, postBody);
         dispatch({
           type: "allRequestsSuccess",
           payload: data.requests,
@@ -196,7 +224,10 @@ export const acceptFriendRequest =
         dispatch({
           type: "acceptFriendRequest",
         });
-        const { data } = await axios.get(`${backendUrl}/api/v1/request/accept/${id}`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/request/accept/${id}`, postBody);
         dispatch({
           type: "acceptFriendRequestSuccess",
           payload: data.requests,
@@ -216,7 +247,10 @@ export const declineFriendRequest =
         dispatch({
           type: "declineFriendRequest",
         });
-        const { data } = await axios.get(`${backendUrl}/api/v1/request/decline/${id}`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/request/decline/${id}`, postBody);
         dispatch({
           type: "declineFriendRequestSuccess",
           payload: data.message,
@@ -236,7 +270,10 @@ export const getAllSuggestions =
         dispatch({
           type: "allSuggestions",
         });
-        const { data } = await axios.get(`${backendUrl}/api/v1/suggestions`);
+        const postBody = {
+          token
+        }
+        const { data } = await axios.post(`${backendUrl}/api/v1/suggestions`, postBody);
         dispatch({
           type: "allSuggestionsSuccess",
           payload: data.suggestions,
@@ -255,7 +292,10 @@ export const logoutUser = () => async (dispatch) => {
       type: "LogoutUserRequest",
     });
 
-    await axios.get(`${backendUrl}/api/v1/logout`);
+    const postBody = {
+      token
+    }
+    await axios.post(`${backendUrl}/api/v1/logout`, postBody);
 
     dispatch({
       type: "LogoutUserSuccess",
@@ -305,7 +345,7 @@ export const updateProfile = (name, email, avatar) => async (dispatch) => {
 
     const { data } = await axios.put(
       `${backendUrl}/api/v1/update/profile`,
-      { name, email, avatar },
+      { name, email, avatar, token },
       {
         headers: {
           "Content-Type": "application/json",
@@ -334,7 +374,7 @@ export const updatePassword =
 
       const { data } = await axios.put(
         `${backendUrl}/api/v1/update/password`,
-        { oldPassword, newPassword },
+        { oldPassword, newPassword, token },
         {
           headers: {
             "Content-Type": "application/json",
@@ -384,6 +424,7 @@ export const forgotPassword = (email) => async (dispatch) => {
       "/api/v1/forgot/password",
       {
         email,
+        token
       },
       {
         headers: {
@@ -414,6 +455,7 @@ export const resetPassword = (token, password) => async (dispatch) => {
       `${backendUrl}/api/v1/password/reset/${token}`,
       {
         password,
+        token
       },
       {
         headers: {
@@ -440,7 +482,10 @@ export const getUserPosts = (id) => async (dispatch) => {
       type: "userPostsRequest",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/userposts/${id}`);
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/userposts/${id}`, postBody);
     dispatch({
       type: "userPostsSuccess",
       payload: data.posts,
@@ -459,7 +504,10 @@ export const getUserProfile = (id) => async (dispatch) => {
       type: "userProfileRequest",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/user/${id}`);
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/user/${id}`, postBody);
     dispatch({
       type: "userProfileSuccess",
       payload: data.user,
@@ -486,7 +534,10 @@ export const friendRequestHandler = (id) => async (dispatch) => {
       type: "friendRequestHandler",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/request/${id}`);
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/request/${id}`, postBody);
     dispatch({
       type: "friendRequestHandlerSuccess",
       payload: data.message,
@@ -506,7 +557,10 @@ export const followAndUnfollowUser = (id) => async (dispatch) => {
       type: "followUserRequest",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/follow/${id}`);
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/follow/${id}`, postBody);
     dispatch({
       type: "followUserSuccess",
       payload: data.message,

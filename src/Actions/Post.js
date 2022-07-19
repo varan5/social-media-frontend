@@ -1,5 +1,7 @@
 import axios from "axios";
-const backendUrl = ''
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL
+const token = localStorage.getItem('token')
 
 export const likePost = (id) => async (dispatch) => {
   try {
@@ -7,7 +9,10 @@ export const likePost = (id) => async (dispatch) => {
       type: "likeRequest",
     });
 
-    const { data } = await axios.get(`${backendUrl}/api/v1/post/${id}`);
+    const postBody = {
+      token
+    }
+    const { data } = await axios.post(`${backendUrl}/api/v1/post/${id}`, postBody);
     dispatch({
       type: "likeSuccess",
       payload: data.message,
@@ -30,6 +35,7 @@ export const addCommentOnPost = (id, comment) => async (dispatch) => {
       `${backendUrl}/api/v1/post/comment/${id}`,
       {
         comment,
+        token
       },
       {
         headers: {
@@ -56,7 +62,7 @@ export const deleteCommentOnPost = (id, commentId) => async (dispatch) => {
     });
 
     const { data } = await axios.delete(`${backendUrl}/api/v1/post/comment/${id}`, {
-      data: { commentId },
+      data: { commentId, token },
     });
     dispatch({
       type: "deleteCommentSuccess",
@@ -81,6 +87,7 @@ export const createNewPost = (caption, image) => async (dispatch) => {
       {
         caption,
         image,
+        token
       },
       {
         headers: {
@@ -110,6 +117,7 @@ export const updatePost = (caption, id) => async (dispatch) => {
       `${backendUrl}/api/v1/post/${id}`,
       {
         caption,
+        token
       },
       {
         headers: {
